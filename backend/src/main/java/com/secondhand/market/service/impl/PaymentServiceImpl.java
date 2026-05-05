@@ -67,7 +67,7 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setUserId(userId);
         payment.setAmount(order.getTotalAmount());
         payment.setStatus(PAYMENT_STATUS_PENDING);
-        payment.setPaymentMethod("alipay");
+        payment.setPaymentMethod(1);
         paymentMapper.insert(payment);
 
         log.info("支付记录创建成功: paymentNo={}, orderId={}, amount={}", payment.getPaymentNo(), orderId, order.getTotalAmount());
@@ -119,8 +119,7 @@ public class PaymentServiceImpl implements PaymentService {
         updateWrapper.eq(Payment::getPaymentNo, paymentNo)
                 .eq(Payment::getStatus, PAYMENT_STATUS_PENDING)
                 .set(Payment::getStatus, PAYMENT_STATUS_PAID)
-                .set(Payment::getTransactionId, transactionId)
-                .set(Payment::getPayTime, LocalDateTime.now());
+                .set(Payment::getTransactionId, transactionId);
         int rows = paymentMapper.update(null, updateWrapper);
         if (rows == 0) {
             log.warn("支付回调处理失败，可能已被处理或状态不匹配: paymentNo={}", paymentNo);
