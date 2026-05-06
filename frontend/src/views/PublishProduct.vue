@@ -165,9 +165,9 @@ const previewImage = ref('')
 
 // 上传配置
 const uploadUrl = '/api/file/upload'
-const uploadHeaders = {
-  Authorization: `Bearer ${localStorage.getItem('token')}`
-}
+const uploadHeaders = ref({
+  Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+})
 
 // 省市区数据
 const regionOptions = ref([
@@ -281,6 +281,13 @@ const handlePriceInput = (value) => {
 
 // 上传前验证
 const beforeUpload = (file) => {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    ElMessage.error('请先登录')
+    return false
+  }
+  uploadHeaders.value.Authorization = `Bearer ${token}`
+
   const isImage = file.type.startsWith('image/')
   const isLt5M = file.size / 1024 / 1024 < 5
 
@@ -347,9 +354,16 @@ const handleSubmit = async () => {
     submitting.value = true
 
     const submitData = {
-      ...form,
-      location: form.location.join('-'),
-      tradeType: form.tradeType.join(',')
+      title: form.title,
+      categoryId: form.categoryId,
+      price: form.price,
+      description: form.description,
+      images: form.images,
+      conditionLevel: form.condition,
+      tradeType: form.tradeType.join(','),
+      province: form.location[0] || '',
+      city: form.location[1] || '',
+      district: form.location[2] || ''
     }
 
     const res = await publishProduct(submitData)
