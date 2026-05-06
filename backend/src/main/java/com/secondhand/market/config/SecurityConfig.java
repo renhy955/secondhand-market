@@ -45,6 +45,8 @@ public class SecurityConfig {
             .antMatchers(HttpMethod.GET, "/product/{id}").permitAll()
             // 分类接口（公开浏览）
             .antMatchers("/category/**").permitAll()
+            // 评价接口（公开浏览）
+            .antMatchers(HttpMethod.GET, "/reviews/**").permitAll()
             // 文件上传（公开访问上传的文件）
             .antMatchers("/uploads/**").permitAll()
             // 管理员登录

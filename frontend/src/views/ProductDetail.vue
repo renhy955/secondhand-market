@@ -175,7 +175,7 @@ const loadProductDetail = async () => {
   loading.value = true
   try {
     const res = await getProductDetail(route.params.id)
-    product.value = res.data
+    product.value = res
 
     // 检查是否已收藏
     checkIsFavorite()
@@ -196,7 +196,7 @@ const loadProductDetail = async () => {
 const checkIsFavorite = async () => {
   try {
     const res = await checkFavorite(route.params.id)
-    isFavorite.value = res.data
+    isFavorite.value = res
   } catch (error) {
     console.error('检查收藏状态失败', error)
   }
@@ -239,8 +239,8 @@ const handleContact = () => {
 const loadReviews = async () => {
   try {
     const res = await getProductReviews(route.params.id, reviewPage.value, reviewSize.value)
-    reviews.value = res.data?.records || res.data?.list || []
-    reviewTotal.value = res.data?.total || 0
+    reviews.value = res.records || res.list || []
+    reviewTotal.value = res.total || 0
   } catch (error) {
     console.error('加载评价失败', error)
   }
@@ -250,11 +250,9 @@ const loadReviews = async () => {
 const loadSimilarProducts = async () => {
   try {
     if (!product.value?.categoryId) return
-    const res = await getProductDetail(route.params.id)
-    // 使用商品列表接口查同分类商品
     const { getProductList } = await import('@/api/product')
     const listRes = await getProductList({ categoryId: product.value.categoryId, page: 1, size: 4 })
-    similarProducts.value = (listRes.data?.records || listRes.data?.list || []).filter(p => p.id !== product.value.id).slice(0, 4)
+    similarProducts.value = (listRes.records || listRes.list || []).filter(p => p.id !== product.value.id).slice(0, 4)
   } catch (error) {
     console.error('加载相似商品失败', error)
   }

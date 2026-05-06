@@ -253,11 +253,15 @@ public class ProductServiceImpl implements ProductService {
         if (images == null || images.isEmpty()) {
             return;
         }
-        for (int i = 0; i < images.size(); i++) {
+        int order = 0;
+        for (String imageUrl : images) {
+            if (!StringUtils.hasText(imageUrl)) {
+                continue;
+            }
             ProductImage image = new ProductImage();
             image.setProductId(productId);
-            image.setImageUrl(images.get(i));
-            image.setSortOrder(i);
+            image.setImageUrl(imageUrl);
+            image.setSortOrder(order++);
             productImageMapper.insert(image);
         }
     }

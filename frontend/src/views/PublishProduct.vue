@@ -305,7 +305,7 @@ const beforeUpload = (file) => {
 // 上传成功
 const handleUploadSuccess = (response, file) => {
   if (response.code === 200) {
-    form.images.push(response.data.url)
+    form.images.push(response.data)
     ElMessage.success('上传成功')
   } else {
     ElMessage.error(response.message || '上传失败')
@@ -319,7 +319,7 @@ const handleUploadSuccess = (response, file) => {
 
 // 移除图片
 const handleRemove = (file) => {
-  const index = form.images.findIndex(url => url === file.response?.data?.url)
+  const index = form.images.findIndex(url => url === file.response?.data)
   if (index > -1) {
     form.images.splice(index, 1)
   }
@@ -366,13 +366,14 @@ const handleSubmit = async () => {
       district: form.location[2] || ''
     }
 
-    const res = await publishProduct(submitData)
+    const result = await publishProduct(submitData)
+    const productId = result.data
 
-    if (res.code === 200) {
+    if (productId) {
       ElMessage.success('发布成功')
-      router.push(`/product/${res.data.id}`)
+      router.push(`/product/${productId}`)
     } else {
-      ElMessage.error(res.message || '发布失败')
+      ElMessage.error('发布失败')
     }
   } catch (error) {
     console.error('发布失败', error)
